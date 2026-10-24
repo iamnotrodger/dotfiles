@@ -1,0 +1,136 @@
+# -----------------------------------------------------------------------------
+# Flexoki Skin
+# -----------------------------------------------------------------------------
+
+# Styles...
+foreground: &foreground "default"
+background: &background "default"
+black: &black "#100F0F"
+blue: &blue "#205EA6"
+green: &green "#66800B"
+grey: &grey "#575653"
+orange: &orange "#BC5215"
+purple: &purple "#5E409D"
+red: &red "#D14D41"
+magenta: &magenta "#CE5D97"
+yellow: &yellow "#D0A215"
+
+# Skin...
+k9s:
+  body:
+    fgColor: *foreground
+    bgColor: *background
+    logoColor: *magenta
+  prompt:
+    fgColor: *magenta
+    bgColor: *background
+    suggestColor: *blue
+  info:
+    fgColor: *magenta
+    sectionColor: *foreground
+  help:
+    fgColor: *foreground
+    bgColor: *background
+    keyColor: *yellow
+    numKeyColor: *green
+    sectionColor: *purple
+  dialog:
+    fgColor: *black
+    bgColor: *background
+    buttonFgColor: *magenta
+    buttonBgColor: *blue
+    buttonFocusFgColor: *black
+    buttonFocusBgColor: *magenta
+    labelFgColor: *orange
+    fieldFgColor: *green
+  frame:
+    border:
+      fgColor: *foreground
+      focusColor: *foreground
+    menu:
+      fgColor: *foreground
+      keyColor: *magenta
+      numKeyColor: *magenta
+    crumbs:
+      fgColor: *foreground
+      bgColor: *blue
+      activeColor: *yellow
+    status:
+      newColor: *green
+      modifyColor: *blue
+      addColor: *grey
+      pendingColor: *orange
+      errorColor: *red
+      highlightColor: *yellow
+      killColor: *purple
+      completedColor: *green
+    title:
+      fgColor: *foreground
+      bgColor: *background
+      highlightColor: *yellow
+      counterColor: *foreground
+      filterColor: *magenta
+  views:
+    charts:
+      bgColor: *background
+      dialBgColor: *background
+      chartBgColor: *background
+      defaultDialColors:
+        - *green
+        - *magenta
+      defaultChartColors:
+        - *green
+        - *magenta
+      resourceColors:
+        batch/v1/jobs:
+          - *green
+          - *magenta
+        v1/persistentvolumes:
+          - *green
+          - *magenta
+        cpu:
+          - *green
+          - *magenta
+        mem:
+          - *green
+          - *magenta
+        v1/events:
+          - *green
+          - *magenta
+        v1/pods:
+          - *green
+          - *magenta
+    table:
+      fgColor: *green
+      bgColor: *background
+      cursorFgColor: *foreground
+      cursorBgColor: *grey
+      markColor: *magenta
+      header:
+        fgColor: *foreground
+        bgColor: *background
+        sorterColor: *orange
+    xray:
+      fgColor: *foreground
+      bgColor: *background
+      cursorColor: *foreground
+      cursorTextColor: *foreground
+      graphicColor: *yellow
+      showIcons: false
+    yaml:
+      keyColor: *red
+      colonColor: *blue
+      valueColor: *green
+    logs:
+      fgColor: *foreground
+      bgColor: *background
+      indicator:
+        fgColor: *foreground
+        bgColor: *background
+        toggleOnColor: *magenta
+        toggleOffColor: *foreground
+    help:
+      fgColor: *grey
+      bgColor: *background
+      indicator:
+        fgColor: *green

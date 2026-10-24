@@ -1,0 +1,63 @@
+tap "bufbuild/buf"
+tap "derailed/k9s"
+tap "go-task/tap"
+tap "koekeishiya/formulae"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# Git extension for versioning large files
+brew "git-lfs"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Task is a task runner/build tool that aims to be simpler and easier to use
+brew "go-task"
+# Tool for glamorous shell scripts
+brew "gum"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Kubernetes CLI To Manage Your Clusters In Style!
+brew "k9s"
+# Tool that can switch between kubectl contexts easily and create aliases
+brew "kubectx"
+# Kubernetes command-line interface
+brew "kubernetes-cli"
+# Template-free customization of Kubernetes YAML manifests
+brew "kustomize"
+# Simple terminal UI for git commands
+brew "lazygit"
+# YAML Parser
+brew "libyaml"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Simple hotkey-daemon for macOS.
+brew "asmvik/formulae/skhd", trusted: true
+# Manage multiple Node.js versions
+brew "nvm"
+# Terminal multiplexer
+brew "tmux"
+# One CLI to format the code tree
+brew "treefmt"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
+brew "yq"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
+# Next-generation plugin manager for zsh
+brew "zplug"
+# UNIX shell (command interpreter)
+brew "zsh"
+cask "font-jetbrains-mono"
+# Terminal emulator that uses platform-native UI and GPU acceleration
+cask "ghostty@tip"
+# Keyboard customiser
+cask "karabiner-elements"
+# System monitor for the menu bar
+cask "stats"

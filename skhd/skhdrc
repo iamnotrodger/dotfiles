@@ -1,0 +1,5 @@
+ctrl - 1 : open -a "Google Chrome"
+ctrl - 2 : open -a "Ghostty"
+ctrl - 3 : open -a "Slack"
+ctrl - 4 : open -a "Obsidian"
+ctrl - 4 : open -a "Spotify"
