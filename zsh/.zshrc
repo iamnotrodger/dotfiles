@@ -2,6 +2,13 @@ export ZSH="$HOME/.oh-my-zsh"
 export XDG_CONFIG_HOME="$HOME/.config"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 
+# Homebrew
+if [[ -f "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -f "/usr/local/bin/brew" ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 
 plugins=(git wd docker zsh-autosuggestions zsh-syntax-highlighting)
