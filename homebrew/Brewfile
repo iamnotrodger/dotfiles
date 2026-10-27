@@ -44,6 +44,8 @@ brew "asmvik/formulae/skhd", trusted: true
 brew "nvm"
 # Terminal multiplexer
 brew "tmux"
+# Builds nvim-treesitter parsers
+brew "tree-sitter-cli"
 # One CLI to format the code tree
 brew "treefmt"
 # Process YAML, JSON, XML, CSV and properties documents from the CLI

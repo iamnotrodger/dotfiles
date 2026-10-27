@@ -234,15 +234,9 @@ do
   -- Quit Neovim
   vim.keymap.set('n', '<C-q>', ':qa<CR>', { desc = 'Quit Neovim', silent = true })
 
-  -- Toggle between flexoki light and dark theme
+  -- Toggle light/dark (the terminal still owns the actual palette)
   vim.keymap.set('n', '<leader>tt', function()
-    if vim.o.background == 'dark' then
-      vim.o.background = 'light'
-      vim.cmd.colorscheme 'flexoki-light'
-    else
-      vim.o.background = 'dark'
-      vim.cmd.colorscheme 'flexoki-dark'
-    end
+    vim.o.background = vim.o.background == 'dark' and 'light' or 'dark'
   end, { desc = '[T]oggle [T]heme (light/dark)', silent = true })
 
   -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
@@ -386,13 +380,6 @@ do
   -- Adds git related signs to the gutter, as well as utilities for managing changes
   vim.pack.add { gh 'lewis6991/gitsigns.nvim' }
   require('gitsigns').setup {
-    signs = {
-      add = { text = '+' }, ---@diagnostic disable-line: missing-fields
-      change = { text = '~' }, ---@diagnostic disable-line: missing-fields
-      delete = { text = '_' }, ---@diagnostic disable-line: missing-fields
-      topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
-      changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
-    },
     gh = true,
   }
 
@@ -412,30 +399,10 @@ do
   }
 
   -- [[ Colorscheme ]]
-  -- You can easily change to a different colorscheme.
-  -- Change the name of the colorscheme plugin below, and then
-  -- change the command under that to load whatever the name of that colorscheme is.
-  --
-  -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'kepano/flexoki-neovim' }
-
-  -- Detect macOS system appearance and set theme accordingly
-  local function set_theme_from_system()
-    local handle = io.popen 'defaults read -g AppleInterfaceStyle 2>/dev/null'
-    if handle then
-      local result = handle:read '*a'
-      handle:close()
-      if result:match 'Dark' then
-        vim.o.background = 'dark'
-        vim.cmd.colorscheme 'flexoki-dark'
-      else
-        vim.o.background = 'light'
-        vim.cmd.colorscheme 'flexoki-light'
-      end
-    end
-  end
-
-  set_theme_from_system()
+  -- Use only the terminal's 16 ANSI colors so nvim follows the Ghostty theme.
+  -- nvim 0.10+ enables termguicolors automatically on truecolor terminals.
+  vim.o.termguicolors = false
+  vim.cmd.colorscheme 'term-ansi'
 
   -- Hide window separator after colorscheme loads
   vim.api.nvim_set_hl(0, 'StatusLine', { bg = 'NONE', fg = 'NONE' })

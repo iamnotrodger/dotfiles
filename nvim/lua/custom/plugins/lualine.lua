@@ -3,51 +3,40 @@
 
 vim.pack.add { 'https://github.com/nvim-lualine/lualine.nvim' }
 
-local p = require('flexoki.palette').palette()
+-- Numbers are ANSI palette indices, so the statusline follows the terminal theme
 local none = 'NONE'
+local muted = 7
 
-local flexoki_theme = {
-  normal = {
-    a = { bg = p['bl'], fg = p['bg'], gui = 'bold' },
-    b = { bg = p['ui-2'], fg = p['tx'] },
-    c = { bg = none, fg = p['tx-2'] },
-  },
-  insert = {
-    a = { bg = p['gr'], fg = p['bg'], gui = 'bold' },
-    b = { bg = p['ui-2'], fg = p['tx'] },
-    c = { bg = none, fg = p['tx-2'] },
-  },
-  visual = {
-    a = { bg = p['pu'], fg = p['bg'], gui = 'bold' },
-    b = { bg = p['ui-2'], fg = p['tx'] },
-    c = { bg = none, fg = p['tx-2'] },
-  },
-  replace = {
-    a = { bg = p['re'], fg = p['bg'], gui = 'bold' },
-    b = { bg = p['ui-2'], fg = p['tx'] },
-    c = { bg = none, fg = p['tx-2'] },
-  },
-  command = {
-    a = { bg = p['ye'], fg = p['bg'], gui = 'bold' },
-    b = { bg = p['ui-2'], fg = p['tx'] },
-    c = { bg = none, fg = p['tx-2'] },
-  },
+local function mode(color)
+  return {
+    a = { bg = color, fg = 0, gui = 'bold' },
+    b = { bg = none, fg = none },
+    c = { bg = none, fg = muted },
+  }
+end
+
+local ansi_theme = {
+  normal = mode(4),
+  insert = mode(2),
+  visual = mode(5),
+  replace = mode(1),
+  command = mode(3),
   inactive = {
-    a = { bg = p['ui'], fg = p['tx-3'] },
-    b = { bg = none, fg = p['tx-3'] },
-    c = { bg = none, fg = p['tx-3'] },
+    a = { bg = none, fg = 8 },
+    b = { bg = none, fg = 8 },
+    c = { bg = none, fg = 8 },
   },
 }
 
 require('lualine').setup {
   options = {
-    theme = flexoki_theme,
+    theme = ansi_theme,
     component_separators = '',
     section_separators = { left = '', right = '' },
   },
   sections = {
     lualine_a = { { 'mode', separator = { left = '', right = '' } } },
-    lualine_b = { { 'branch', color = { bg = p['ye-2'], fg = p['bg-2'] }, separator = { right = '' } } },
+    lualine_b = { { 'branch', color = { bg = 3, fg = 0 }, separator = { right = '' } } },
     lualine_c = { 'filename', 'filetype', 'diagnostics' },
     lualine_x = {},
     lualine_y = { 'progress' },
