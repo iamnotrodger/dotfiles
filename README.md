@@ -20,3 +20,13 @@ Managed with [GNU Stow](https://www.gnu.org/software/stow/).
 ```bash
 stow .
 ```
+
+## nvim
+
+`nvim/` is [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) as a git subtree with my changes on top. Pull upstream updates with:
+
+```bash
+git subtree pull --prefix nvim https://github.com/nvim-lua/kickstart.nvim master --squash
+```
+
+Requires a clean working tree. Resolve any conflicts like a normal merge.
