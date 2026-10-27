@@ -99,12 +99,25 @@ do
   vim.g.maplocalleader = ' '
 
   -- Set to true if you have a Nerd Font installed and selected in the terminal
-  vim.g.have_nerd_font = false
+  vim.g.have_nerd_font = true
 
   -- [[ Setting options ]]
   --  See `:help vim.o`
   -- NOTE: You can change these options as you wish!
   --  For more options, you can see `:help option-list`
+
+  -- Hide the ~ characters on empty lines and window separator
+  vim.opt.fillchars = { eob = ' ', vert = ' ' }
+
+  -- Use a single global status bar instead of one per window
+  vim.o.laststatus = 3
+
+  -- Hide command line (commands appear in statusline)
+  vim.o.cmdheight = 0
+
+  -- Tab width settings
+  vim.o.tabstop = 2
+  vim.o.shiftwidth = 2
 
   -- Make line numbers default
   vim.o.number = true
@@ -156,7 +169,7 @@ do
   --   See `:help lua-options`
   --   and `:help lua-guide-options`
   vim.o.list = true
-  vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+  vim.opt.listchars = { tab = '· ', trail = '·', nbsp = '␣' }
 
   -- Preview substitutions live, as you type!
   vim.o.inccommand = 'split'
@@ -210,6 +223,21 @@ do
   }
 
   vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+
+  -- Comment toggle
+  vim.keymap.set('n', '<leader>/', 'gcc', { desc = 'Toggle comment', remap = true })
+  vim.keymap.set('v', '<leader>/', 'gc', { desc = 'Toggle comment', remap = true })
+
+  -- Close current buffer
+  vim.keymap.set('n', '<leader>x', ':write | bdelete<CR>', { desc = 'Save and close current buffer', silent = true })
+
+  -- Quit Neovim
+  vim.keymap.set('n', '<C-q>', ':qa<CR>', { desc = 'Quit Neovim', silent = true })
+
+  -- Toggle light/dark (the terminal still owns the actual palette)
+  vim.keymap.set('n', '<leader>tt', function()
+    vim.o.background = vim.o.background == 'dark' and 'light' or 'dark'
+  end, { desc = '[T]oggle [T]heme (light/dark)', silent = true })
 
   -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
   -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -353,6 +381,7 @@ do
   vim.pack.add { gh 'lewis6991/gitsigns.nvim' }
   local gitsigns = require 'gitsigns'
   gitsigns.setup {
+    gh = true,
     signs = {
       add = { text = '+' }, ---@diagnostic disable-line: missing-fields
       change = { text = '~' }, ---@diagnostic disable-line: missing-fields
@@ -406,7 +435,7 @@ do
   vim.pack.add { gh 'folke/which-key.nvim' }
   require('which-key').setup {
     -- Delay between pressing a key and opening which-key (milliseconds)
-    delay = 0,
+    delay = 500,
     icons = { mappings = vim.g.have_nerd_font },
     -- Document existing key chains
     spec = {
@@ -418,23 +447,15 @@ do
   }
 
   -- [[ Colorscheme ]]
-  -- You can easily change to a different colorscheme.
-  -- Change the name of the colorscheme plugin below, and then
-  -- change the command under that to load whatever the name of that colorscheme is.
-  --
-  -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  vim.pack.add { gh 'folke/tokyonight.nvim' }
-  ---@diagnostic disable-next-line: missing-fields
-  require('tokyonight').setup {
-    styles = {
-      comments = { italic = false }, -- Disable italics in comments
-    },
-  }
+  -- Use only the terminal's 16 ANSI colors so nvim follows the Ghostty theme.
+  -- nvim 0.10+ enables termguicolors automatically on truecolor terminals.
+  vim.o.termguicolors = false
+  vim.cmd.colorscheme 'term-ansi'
 
-  -- Load the colorscheme here.
-  -- Like many other themes, this one has different styles, and you could load
-  -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'tokyonight-night'
+  -- Hide window separator after colorscheme loads
+  vim.api.nvim_set_hl(0, 'StatusLine', { bg = 'NONE', fg = 'NONE' })
+  vim.api.nvim_set_hl(0, 'WinSeparator', { bg = 'NONE', fg = 'NONE' })
+  vim.api.nvim_set_hl(0, 'VertSplit', { bg = 'NONE', fg = 'NONE' })
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
@@ -473,18 +494,23 @@ do
   -- - sr)'  - [S]urround [R]eplace [)] [']
   require('mini.surround').setup()
 
-  -- Simple and easy statusline.
-  --  You could remove this setup call if you don't like it,
-  --  and try some other statusline plugin
-  local statusline = require 'mini.statusline'
-  -- Set `use_icons` to true if you have a Nerd Font
-  statusline.setup { use_icons = vim.g.have_nerd_font }
+  -- Highlight and trim trailing whitespace
+  require('mini.trailspace').setup()
+  vim.keymap.set('n', '<leader>cw', function()
+    MiniTrailspace.trim()
+  end, { desc = '[C]lean trailing [W]hitespace' })
+  vim.api.nvim_create_autocmd('BufWritePre', {
+    group = vim.api.nvim_create_augroup('mini-trailspace-trim', { clear = true }),
+    callback = function()
+      MiniTrailspace.trim()
+    end,
+  })
 
-  -- You can configure sections in the statusline by overriding their
-  -- default behavior. For example, here we set the section for
-  -- cursor location to LINE:COLUMN
-  ---@diagnostic disable-next-line: duplicate-set-field
-  statusline.section_location = function() return '%2l:%-2v' end
+  -- Toggle splitting/joining arguments, arrays, etc. across lines (default: gS)
+  require('mini.splitjoin').setup()
+
+  -- Statusline is provided by lualine (see lua/custom/plugins/lualine.lua),
+  -- so mini.statusline is intentionally left disabled here.
 
   -- ... and there is more!
   --  Check out: https://github.com/nvim-mini/mini.nvim
@@ -560,7 +586,7 @@ do
   vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
   vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
   vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-  vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+  vim.keymap.set('n', '<leader>s.', function() builtin.oldfiles { cwd_only = true } end, { desc = '[S]earch Recent Files (cwd)' })
   vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
   vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
@@ -598,28 +624,8 @@ do
     end,
   })
 
-  -- Override default behavior and theme when searching
-  vim.keymap.set('n', '<leader>/', function()
-    -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-    builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-      winblend = 10,
-      previewer = false,
-    })
-  end, { desc = '[/] Fuzzily search in current buffer' })
-
-  -- It's also possible to pass additional configuration options.
-  --  See `:help telescope.builtin.live_grep()` for information about particular keys
-  vim.keymap.set(
-    'n',
-    '<leader>s/',
-    function()
-      builtin.live_grep {
-        grep_open_files = true,
-        prompt_title = 'Live Grep in Open Files',
-      }
-    end,
-    { desc = '[S]earch [/] in Open Files' }
-  )
+  -- Search files with git changes
+  vim.keymap.set('n', '<leader>s/', builtin.git_status, { desc = '[S]earch [/] Git Changed Files' })
 
   -- Shortcut for searching your Neovim configuration files
   vim.keymap.set('n', '<leader>sn', function() builtin.find_files { cwd = vim.fn.stdpath 'config', follow = true } end, { desc = '[S]earch [N]eovim files' })
@@ -677,13 +683,23 @@ do
         vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
       end
 
+      -- Hover documentation.
+      --  Neovim 0.12 only auto-maps K->hover when 'keywordprg' is default, so
+      --  filetypes that ship their own keywordprg (e.g. Go's :GoKeywordPrg ->
+      --  `go doc`) never get it. Map it explicitly so K hovers via the LSP.
+      map('K', vim.lsp.buf.hover, 'Hover Documentation')
+
       -- Rename the variable under your cursor.
       --  Most Language Servers support renaming across files, etc.
       map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
 
       -- Execute a code action, usually your cursor needs to be on top of an error
       -- or a suggestion from your LSP for this to activate.
-      map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+      -- map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+      map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+
+      -- Jump to the definition of the word under your cursor.
+      map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
       -- WARN: This is not Goto Definition, this is Goto Declaration.
       --  For example, in C this would take you to the header.
@@ -732,9 +748,24 @@ do
   --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
+  -- cspell LSP for spell checking with code actions
+  vim.lsp.config('cspell', {
+    cmd = { 'cspell-lsp', '--stdio' },
+    root_markers = { 'cspell.json', '.cspell.json', 'cspell.config.yaml', 'cspell.config.cjs', '.git' },
+  })
+  vim.lsp.enable 'cspell'
+
   local servers = {
     -- clangd = {},
-    -- gopls = {},
+    gopls = {
+      settings = {
+        gopls = {
+          buildFlags = { '-tags=integration' },
+        },
+      },
+    },
+    buf_ls = {},
+    terraformls = {},
     -- pyright = {},
     -- tsc = {},
     --
@@ -743,7 +774,8 @@ do
     --
     -- But for many setups, the LSP (`rust_analyzer`) will work just fine
     -- rust_analyzer = {},
-
+    ts_ls = {},
+    tsp_server = {},
     stylua = {}, -- Used to format Lua code
 
     -- Special Lua Config, as recommended by neovim help docs
@@ -803,7 +835,9 @@ do
   -- You can press `g?` for help in this menu.
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
-    -- You can add other tools here that you want Mason to install
+    'stylua', -- Lua formatter
+    'cspell', -- Spell checker
+    'markdownlint', -- Markdown linter
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -896,7 +930,7 @@ do
       -- <c-k>: Toggle signature help
       --
       -- See `:help blink-cmp-config-keymap` for defining your own keymap
-      preset = 'default',
+      preset = 'super-tab',
 
       -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
       --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -948,7 +982,24 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  local parsers = {
+    'bash',
+    'c',
+    'diff',
+    'html',
+    'lua',
+    'luadoc',
+    'markdown',
+    'markdown_inline',
+    'query',
+    'vim',
+    'vimdoc',
+    'go',
+    'javascript',
+    'typescript',
+    'terraform',
+    'yaml',
+  }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -1014,16 +1065,16 @@ do
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug'
-  -- require 'kickstart.plugins.indent_line'
-  -- require 'kickstart.plugins.lint'
-  -- require 'kickstart.plugins.autopairs'
-  -- require 'kickstart.plugins.neo-tree'
+  require 'kickstart.plugins.debug'
+  require 'kickstart.plugins.indent_line'
+  require 'kickstart.plugins.lint'
+  require 'kickstart.plugins.autopairs'
+  require 'kickstart.plugins.neo-tree'
 
   -- NOTE: You can add your own plugins, configuration, etc. in `lua/custom/plugins/*.lua`.
   --
   -- For independent modules, uncomment the convenience loader:
-  -- require 'custom.plugins'
+  require 'custom.plugins'
   --
   -- `custom.plugins` automatically loads files from that directory, but their
   -- order is unspecified. If plugins depend on each other, keep them in the same
